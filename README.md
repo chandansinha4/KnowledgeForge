@@ -1,15 +1,21 @@
-KnowledgeForge
+# KnowledgeForge
 
-AI-powered knowledge management system built with:
+AI-powered knowledge management system that transforms YouTube videos into structured notes using multi-agent workflows.
 
-✓ FastAPI
+## Tech Stack
 
-✓ LangGraph
+- FastAPI
+- LangGraph
+- LangChain
+- Ollama
+- OpenAI
+- Qdrant
+- Notion
 
-✓ OpenAI
+## Current Progress
 
-✓ Gemini
-
-✓ Qdrant
-
-✓ Notion
+- ✅ Project initialized
+- ✅ Core infrastructure
+- ✅ LangChain experiments
+- ⏳ LLM Service
+- ⏳ Video Agent
