@@ -1,5 +1,5 @@
 from functools import lru_cache
-
+from app.ai.models import Provider
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -12,8 +12,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "KnowledgeForge"
     APP_VERSION: str = "0.1.0"
 
-    DEFAULT_PROVIDER: str = "openai"
-    DEFAULT_MODEL: str = "gpt-5-mini"
+    DEFAULT_PROVIDER: Provider = Provider.OLLAMA
+    DEFAULT_MODEL: str = "gemma3:1b"
 
     TEMPERATURE: float = Field(
         default=0.2,
