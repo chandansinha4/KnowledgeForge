@@ -1,12 +1,10 @@
 from fastapi import APIRouter
 from app.ai.service import LLMService
-from fastapi import APIRouter
 
 from app.ai.models import (
     ChatRequest,
     Message,
 )
-from app.ai.service import LLMService
 from app.api.schemas import (
     ChatAPIRequest,
     ChatAPIResponse,
