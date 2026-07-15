@@ -12,29 +12,34 @@ AI-powered knowledge management system that transforms YouTube videos into struc
 - Qdrant
 - Notion
 
-## Project Status
+## Roadmap
 
-Current Phase: Phase 3 – AI Capabilities
+### Version 1.0 (Current Goal)
 
-### Completed
-
-- ✅ Project architecture
-- ✅ FastAPI backend
-- ✅ Configuration management
-- ✅ Provider-agnostic LLM service
+- ✅ Provider-agnostic LLM Service
 - ✅ Knowledge Agent
-- ✅ Knowledge API
 - ✅ Health API
+- 🚧 KnowledgeDocument
+- ⬜ Reflection Agent
+- ⬜ YouTube Transcript Extraction
+- ⬜ Markdown Export
+- ⬜ End-to-End YouTube → Notes Workflow
 
-### In Progress
+### Version 1.1
 
-- 🚧 Reflection Agent
+- Obsidian Export
+- Notion Export
+- PDF Export
 
-### Planned
+### Version 1.2
 
 - Quiz Agent
 - Flashcards Agent
-- Markdown Export
-- YouTube Ingestion
+- Anki Export
+
+### Version 2.0
+
 - LangGraph Workflow
-- RAG Integration
+- PDF Ingestion
+- RAG
+- Multi-source Knowledge Processing

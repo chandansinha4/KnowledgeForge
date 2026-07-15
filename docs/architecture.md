@@ -2,41 +2,103 @@
 
 ## Overview
 
-KnowledgeForge is an AI-powered knowledge processing system designed with a layered architecture. The project focuses on maintainability, extensibility, and clear separation of concerns. Instead of exposing a generic chatbot, the application provides domain-specific AI capabilities such as knowledge extraction, reflection generation, quizzes, and flashcards.
+KnowledgeForge is an AI-powered learning assistant that transforms long-form educational content into structured, reusable knowledge.
 
-The architecture separates HTTP concerns, business logic, prompt engineering, and LLM integration into independent layers.
+The project is designed around a layered architecture that separates HTTP concerns, business logic, prompt engineering, AI orchestration, and content export. This separation keeps the system modular, testable, and easy to extend as new capabilities are introduced.
+
+The long-term goal is to create an AI system that helps users learn from educational content and seamlessly integrates the generated knowledge into their personal knowledge management workflow.
+
+---
+
+# Design Principles
+
+KnowledgeForge is built around the following engineering principles:
+
+* Separation of concerns
+* Single Responsibility Principle (SRP)
+* Dependency Injection
+* Provider-agnostic AI integration
+* Centralized configuration
+* Domain-driven design
+* Incremental architecture evolution
+* Explicit domain models
+* Consistent request flow
+
+Every new feature should follow these principles.
 
 ---
 
 # High-Level Architecture
 
 ```text
-Client
-   │
-   ▼
-FastAPI
-   │
-   ▼
-API Routes
-   │
-   ▼
-API Schemas
-   │
-   ▼
-Agents / Services
-   │
-   ▼
-Prompt Templates
-   │
-   ▼
-LLM Service
-   │
-   ▼
-LangChain
-   │
-   ▼
-LLM Provider
+                    Client
+                       │
+                       ▼
+                   FastAPI
+                       │
+                       ▼
+                 API Routes
+                       │
+                       ▼
+                API Schemas
+                       │
+                       ▼
+              Agents / Services
+                       │
+                       ▼
+              Prompt Templates
+                       │
+                       ▼
+                 LLM Service
+                       │
+                       ▼
+                  LangChain
+                       │
+                       ▼
+                 LLM Provider
 ```
+
+---
+
+# Current Request Flow
+
+Every AI request follows the same pipeline.
+
+```text
+HTTP Request
+      │
+      ▼
+API Route
+      │
+      ▼
+Request Schema
+      │
+      ▼
+Agent
+      │
+      ▼
+Prompt Template
+      │
+      ▼
+LLM Service
+      │
+      ▼
+LangChain
+      │
+      ▼
+LLM Provider
+      │
+      ▼
+Domain Object
+      │
+      ▼
+Response Schema
+      │
+      ▼
+HTTP Response
+```
+
+This keeps HTTP, business logic, prompts, and AI infrastructure completely independent.
 
 ---
 
@@ -49,47 +111,64 @@ Responsible for:
 * Exposing REST endpoints
 * Request validation
 * Response serialization
-* Converting API models to domain models
+* Swagger documentation
 
-The API layer never communicates directly with an LLM.
+The API layer never communicates directly with language models.
 
 ---
 
 ## Agent Layer
 
-Agents represent business capabilities.
+Agents represent AI capabilities.
 
-Examples:
+Examples include:
 
 * KnowledgeAgent
 * ReflectionAgent
-* QuizAgent
-* FlashcardsAgent
 
-An agent is responsible for:
+Future agents:
+
+* QuizAgent
+* FlashcardAgent
+
+Each agent is responsible for:
 
 * Selecting the correct prompt
-* Preparing input variables
+* Preparing prompt variables
 * Calling the LLM service
 * Returning domain objects
 
-Agents should not contain HTTP or infrastructure logic.
+Agents never contain HTTP logic.
+
+---
+
+## Service Layer
+
+Services provide reusable business functionality that is not tied to a specific AI capability.
+
+Current services include:
+
+* HealthService
+* LLMService
+
+Future services may include:
+
+* TranscriptService
+* ExportService
 
 ---
 
 ## Prompt Layer
 
-Prompt templates define the behavior of each AI capability.
+Each AI capability owns its own prompt.
 
-Each agent owns its own prompt.
-
-Current prompts include:
+Examples:
 
 * Knowledge Prompt
-
-Future prompts include:
-
 * Reflection Prompt
+
+Future prompts:
+
 * Quiz Prompt
 * Flashcard Prompt
 
@@ -99,17 +178,31 @@ Prompt engineering is isolated from application logic.
 
 ## LLM Service
 
-The LLM service provides a provider-agnostic interface for interacting with language models.
+The LLMService acts as the provider abstraction layer.
 
 Responsibilities:
 
 * Model creation
-* Provider abstraction
+* Provider selection
 * Request execution
 * Token usage extraction
-* Metadata extraction
+* Response metadata extraction
 
-The rest of the application does not depend on LangChain or specific providers.
+The rest of the application never depends directly on LangChain or specific LLM providers.
+
+---
+
+## Domain Models
+
+KnowledgeForge exchanges structured domain objects instead of raw strings.
+
+Examples:
+
+* HealthStatus
+* KnowledgeDocument
+* ReflectionDocument
+
+Domain models become the common language between different components of the system.
 
 ---
 
@@ -117,82 +210,66 @@ The rest of the application does not depend on LangChain or specific providers.
 
 Application configuration is centralized using Pydantic Settings.
 
-Configuration values are loaded from the `.env` file during application startup.
+Configuration is loaded once during application startup from the `.env` file.
 
-Examples:
+Configuration includes:
 
 * Default provider
 * Default model
 * Temperature
-* Top-p
 * Maximum tokens
+* Top-p
 * API keys
+* Logging configuration
 
-No agent or service hardcodes model information.
+No agent or service hardcodes provider-specific values.
 
 ---
 
-# Current Request Flow
+# Version 1 Workflow
 
-Knowledge generation follows this flow:
+The first complete workflow of KnowledgeForge is focused on learning from YouTube videos.
 
 ```text
-HTTP Request
-      │
-      ▼
-Knowledge Route
-      │
-      ▼
-KnowledgeRequest
-      │
-      ▼
-KnowledgeAgent
-      │
-      ▼
-Knowledge Prompt
-      │
-      ▼
-LLMService
-      │
-      ▼
-LangChain
-      │
-      ▼
-LLM Provider
-      │
-      ▼
-ChatResponse
-      │
-      ▼
-KnowledgeResponse
-      │
-      ▼
-HTTP Response
+                 YouTube URL
+                      │
+                      ▼
+           Transcript Extraction
+                      │
+                      ▼
+            Transcript Cleaning
+                      │
+                      ▼
+             Knowledge Agent
+                      │
+                      ▼
+           KnowledgeDocument
+                      │
+                      ▼
+             Reflection Agent
+                      │
+                      ▼
+          ReflectionDocument
+                      │
+                      ▼
+                 Export Layer
+          ┌─────────┼──────────┐
+          ▼         ▼          ▼
+      Markdown   Obsidian    Notion
 ```
 
----
-
-# Design Principles
-
-The project follows the following engineering principles:
-
-* Separation of concerns
-* Single responsibility principle
-* Dependency injection
-* Provider-agnostic AI integration
-* Centralized configuration
-* Incremental architecture evolution
-* Explicit domain models
-* Clear API boundaries
+This represents the complete Version 1 user workflow.
 
 ---
 
-# Current Project Structure
+# Project Structure
 
 ```text
 app/
 │
 ├── agents/
+│   ├── knowledge.py
+│   └── reflection.py
 │
 ├── ai/
 │   ├── prompts/
@@ -207,21 +284,76 @@ app/
 │
 ├── health/
 │
+├── exporters/
+│
+├── youtube/
+│
 └── main.py
 ```
 
+Some directories represent future milestones and may not yet exist.
+
 ---
 
-# Future Architecture
+# Roadmap
 
-Planned additions include:
+## Version 1.0
 
-* Reflection Agent
-* Quiz Agent
-* Flashcards Agent
-* YouTube ingestion pipeline
-* Markdown exporter
-* LangGraph workflow orchestration
+Goal:
+
+Transform a YouTube video into structured learning notes.
+
+Includes:
+
+* Transcript extraction
+* Knowledge generation
+* Reflection generation
+* Markdown export
+
+---
+
+## Version 1.1
+
+Improve integration with knowledge management systems.
+
+Includes:
+
+* Obsidian export
+* Notion export
+* PDF export
+
+---
+
+## Version 1.2
+
+Learning enhancement features.
+
+Includes:
+
+* Quiz generation
+* Flashcard generation
+* Anki export
+
+---
+
+## Version 2.0
+
+Advanced AI orchestration.
+
+Includes:
+
+* LangGraph workflow
+* PDF ingestion
 * Retrieval-Augmented Generation (RAG)
+* Multi-source knowledge processing
+* Semantic search
 
-These capabilities will be added without changing the existing architecture, allowing the system to grow through composition rather than redesign.
+---
+
+# Architectural Philosophy
+
+KnowledgeForge is built by first establishing a stable foundation and then layering new capabilities on top of it.
+
+Instead of continuously redesigning the system, new features are added through composition.
+
+This approach keeps the architecture predictable, scalable, and easy to maintain while allowing the project to evolve from a simple AI application into a complete AI-powered learning platform.
