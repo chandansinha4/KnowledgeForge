@@ -34,4 +34,4 @@ class KnowledgeResponse(BaseModel):
 
     output_tokens: int | None = None
 
-    total_tokens: int | None = None
+    total_tokens: int | None = None 
