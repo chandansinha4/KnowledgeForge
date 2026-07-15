@@ -46,16 +46,34 @@ class LLMService:
 
         config = request.generation_config
 
+        temperature = (
+            config.temperature
+            if config and config.temperature is not None
+            else self.settings.DEFAULT_TEMPERATURE
+        )
+
+        max_tokens = (
+            config.max_tokens
+            if config and config.max_tokens is not None
+            else self.settings.DEFAULT_MAX_TOKENS
+        )
+
+        top_p = (
+            config.top_p
+            if config and config.top_p is not None
+            else self.settings.DEFAULT_TOP_P
+        )
+
         match request.provider:
 
             case Provider.OLLAMA:
                 return ChatOllama(
-                model=request.model,
-                temperature=config.temperature,
-                num_predict=config.max_tokens,
-                top_p=config.top_p,
-                base_url=self.settings.OLLAMA_BASE_URL,
-            )
+                    model=request.model,
+                    temperature=temperature,
+                    num_predict=max_tokens,
+                    top_p=top_p,
+                    base_url=self.settings.OLLAMA_BASE_URL,
+                )
 
             case _:
                 raise LLMError(

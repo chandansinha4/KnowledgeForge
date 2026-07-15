@@ -8,7 +8,7 @@ from app.ai.models import (
 )
 from app.ai.prompts.knowledge import KNOWLEDGE_PROMPT
 from app.ai.service import LLMService
-
+from app.core.config import Settings
 
 class KnowledgeAgent:
     """
@@ -19,8 +19,10 @@ class KnowledgeAgent:
     def __init__(
         self,
         llm_service: LLMService,
+        settings: Settings,
     ) -> None:
         self._llm_service = llm_service
+        self._settings = settings
 
     async def generate(
         self,
@@ -51,8 +53,10 @@ class KnowledgeAgent:
                 )
 
         request = ChatRequest(
-            provider=Provider.OLLAMA,
-            model="gemma3:1b",
+            provider=Provider(
+            self._settings.DEFAULT_PROVIDER
+            ),
+            model=self._settings.DEFAULT_MODEL,
             messages=messages,
         )
 

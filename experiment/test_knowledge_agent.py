@@ -2,11 +2,11 @@ import asyncio
 
 from app.agents.knowledge import KnowledgeAgent
 from app.ai.service import LLMService
-
+from app.core.config import settings
 
 async def main() -> None:
     llm_service = LLMService()
-    knowledge_agent = KnowledgeAgent(llm_service)
+    knowledge_agent = KnowledgeAgent(llm_service,settings,)
 
     text = """
     Retrieval-Augmented Generation (RAG) combines the reasoning ability of
