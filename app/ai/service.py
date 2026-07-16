@@ -8,7 +8,6 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_ollama import ChatOllama
-from langchain_openai import ChatOpenAI
 
 from app.ai.models import (
     ChatRequest,

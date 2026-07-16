@@ -21,29 +21,37 @@ async def main() -> None:
     changing data.
     """
 
-    response = await knowledge_agent.generate(text)
+    document = await knowledge_agent.generate(text)
 
     print("=" * 60)
     print("KNOWLEDGE AGENT RESPONSE")
     print("=" * 60)
-
-    print(response.content)
+    print("TITLE")
+    print("=" * 60)
+    print(document.title)
 
     print()
 
     print("=" * 60)
-    print("TOKEN USAGE")
+    print("MARKDOWN")
     print("=" * 60)
+    print(document.markdown)
 
-    print(response.usage)
+    # print()
 
-    print()
+    # print("=" * 60)
+    # print("TOKEN USAGE")
+    # print("=" * 60)
 
-    print("=" * 60)
-    print("METADATA")
-    print("=" * 60)
+    # print(response.usage)
 
-    print(response.response_metadata)
+    # print()
+
+    # print("=" * 60)
+    # print("METADATA")
+    # print("=" * 60)
+
+    # print(response.response_metadata)
 
 
 if __name__ == "__main__":

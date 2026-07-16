@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from app.ai.models import (
     ChatRequest,
-    ChatResponse,
     Message,
     Provider,
 )
 from app.ai.prompts.knowledge import KNOWLEDGE_PROMPT
 from app.ai.service import LLMService
 from app.core.config import Settings
+import re
+
+from app.domain.knowledge import KnowledgeDocument
 
 class KnowledgeAgent:
     """
@@ -24,10 +26,22 @@ class KnowledgeAgent:
         self._llm_service = llm_service
         self._settings = settings
 
+    def _extract_markdown_title(self, markdown: str) -> str:
+        """
+        Extract the first H1 heading from a Markdown document.
+        """
+
+        match = re.search(r"^#\s+(.+)$", markdown, re.MULTILINE)
+
+        if match:
+            return match.group(1).strip()
+
+        return "Untitled Notes"
+
     async def generate(
         self,
         text: str,
-    ) -> ChatResponse:
+    ) -> KnowledgeDocument:
         """
         Generate structured knowledge notes.
         """
@@ -60,6 +74,11 @@ class KnowledgeAgent:
             messages=messages,
         )
 
-        return await self._llm_service.generate(
-            request
+        response = await self._llm_service.generate(request)
+
+        title = self._extract_markdown_title(response.content)
+
+        return KnowledgeDocument(
+            title=title,
+            markdown=response.content,
         )

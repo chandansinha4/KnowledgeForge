@@ -34,27 +34,10 @@ async def generate_knowledge(
     Convert raw text into structured Markdown study notes.
     """
 
-    response = await knowledge_agent.generate(
-        text=request.text,
-    )
+
+    document = await knowledge_agent.generate(request.text)
 
     return KnowledgeResponse(
-        content=response.content,
-        provider=response.provider,
-        model=response.model,
-        input_tokens=(
-            response.usage.input_tokens
-            if response.usage
-            else None
-        ),
-        output_tokens=(
-            response.usage.output_tokens
-            if response.usage
-            else None
-        ),
-        total_tokens=(
-            response.usage.total_tokens
-            if response.usage
-            else None
-        ),
+        title=document.title,
+        markdown=document.markdown,
     )

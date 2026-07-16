@@ -2,8 +2,6 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from app.ai.models import Provider
-
 
 class KnowledgeRequest(BaseModel):
     """
@@ -17,21 +15,15 @@ class KnowledgeRequest(BaseModel):
         description="Raw text to transform into structured knowledge notes.",
     )
 
-
-
 class KnowledgeResponse(BaseModel):
     """
-    Response returned by the Knowledge Agent.
+    Response returned after generating structured knowledge.
     """
 
-    content: str
+    title: str = Field(
+        description="Title extracted from the generated Markdown.",
+    )
 
-    provider: Provider
-
-    model: str
-
-    input_tokens: int | None = None
-
-    output_tokens: int | None = None
-
-    total_tokens: int | None = None 
+    markdown: str = Field(
+        description="Generated knowledge in Markdown format.",
+    )
