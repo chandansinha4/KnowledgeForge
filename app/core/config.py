@@ -75,13 +75,20 @@ class Settings(BaseSettings):
         description="Default nucleus sampling value.",
     )
 
+    # ==========================================================
+    # Gemini
+    # ==========================================================
+
+    GEMINI_API_KEY: str
+    GEMINI_MODEL: str
+
 
 @lru_cache
 def get_settings() -> Settings:
     """
     Return a cached Settings instance.
     """
-    return Settings()
+    return Settings() 
 
 
 settings = get_settings()

@@ -20,6 +20,7 @@ from app.ai.models import (
 from app.core.config import get_settings
 from app.core.exceptions import LLMError
 from app.core.logger import logger
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 class LLMService:
@@ -72,6 +73,15 @@ class LLMService:
                     num_predict=max_tokens,
                     top_p=top_p,
                     base_url=self.settings.OLLAMA_BASE_URL,
+                )
+
+            case Provider.GEMINI:
+                return ChatGoogleGenerativeAI(
+                    model=request.model,
+                    google_api_key=self.settings.GEMINI_API_KEY,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
                 )
 
             case _:
@@ -139,6 +149,39 @@ class LLMService:
             output_tokens=usage.get("output_tokens"),
             total_tokens=usage.get("total_tokens"),
         )
+    @staticmethod
+    def _extract_content(
+        response: AIMessage,
+    ) -> str:
+        """
+        Extract text content from a LangChain AIMessage.
+
+        Different LLM providers may return content in
+        different representations. Normalize them into
+        a plain string for the application layer.
+        """
+
+        content = response.content
+
+        if isinstance(content, str):
+            return content
+
+        if isinstance(content, list):
+            text_parts: list[str] = []
+
+            for block in content:
+                if isinstance(block, dict):
+                    text = block.get("text")
+
+                    if isinstance(text, str):
+                        text_parts.append(text)
+
+            return "".join(text_parts)
+
+        raise LLMError(
+            f"Unsupported response content type: {type(content).__name__}"
+        )
+
     
     def _build_chat_response(
         self,
@@ -150,12 +193,12 @@ class LLMService:
         """
 
         return ChatResponse(
-            content=response.content,
-            provider=request.provider,
-            model=request.model,
-            usage=self._extract_usage(response),
-            response_metadata=response.response_metadata,
-        )
+        content=self._extract_content(response),
+        provider=request.provider,
+        model=request.model,
+        usage=self._extract_usage(response),
+        response_metadata=response.response_metadata,
+    )
     
     async def generate(
         self,
@@ -180,10 +223,21 @@ class LLMService:
 
             response = await model.ainvoke(messages)
 
-            return self._build_chat_response(
+            chat_response = self._build_chat_response(
                 response=response,
                 request=request,
             )
+            logger.info(
+                "LLM usage: provider=%s model=%s "
+                "input_tokens=%s output_tokens=%s total_tokens=%s",
+                request.provider.value,
+                request.model,
+                chat_response.usage.input_tokens if chat_response.usage else None,
+                chat_response.usage.output_tokens if chat_response.usage else None,
+                chat_response.usage.total_tokens if chat_response.usage else None,
+            )
+            
+            return chat_response
 
         except Exception as exc:
 
