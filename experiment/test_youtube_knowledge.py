@@ -18,15 +18,22 @@ async def main() -> None:
         settings=settings,
     )
 
-    url = "https://www.youtube.com/watch?v=J7DzL2_Na80&t=232s"
+    url = "https://www.youtube.com/watch?v=lvO88XxNAzs"
 
     # Step 1: Ingest YouTube transcript
     transcript_document = await youtube_service.ingest(url)
 
     print("=" * 60)
     print("TRANSCRIPT")
-    print("=" * 60)
-    print(transcript_document.transcript)
+    # print("=" * 60)
+    # print(transcript_document.transcript)
+
+    with open("t8_transcript.txt", "w", encoding="utf-8") as f:
+        f.write(transcript_document.transcript)
+
+    print("Transcript saved.")
+    print(f"Characters: {len(transcript_document.transcript):,}")
+    print(f"Words: {len(transcript_document.transcript.split()):,}")
 
     # Step 2: Generate knowledge from transcript
     knowledge_document = await knowledge_agent.generate(

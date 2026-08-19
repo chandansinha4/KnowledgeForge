@@ -25,11 +25,22 @@ AI-powered knowledge management system that transforms YouTube videos into struc
 - ⬜ Markdown Export
 - ⬜ End-to-End YouTube → Notes Workflow
 
-### Version 1.1
+### V1 Scope
 
-- Obsidian Export
-- Notion Export
-- PDF Export
+- YouTube transcript ingestion
+- Knowledge extraction
+- Reflection generation
+- Provider-agnostic LLM service
+- Gemini as the default provider
+- Direct transcript processing
+- Markdown knowledge documents
+
+### Future / V1.1+
+
+- Context-aware model capability detection
+- Dynamic direct vs. chunked processing
+- Hierarchical knowledge extraction
+- Large-transcript processing
 
 ### Version 1.2
 

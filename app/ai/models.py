@@ -64,7 +64,7 @@ class GenerationConfig(BaseModel):
     )
 
     max_tokens: int = Field(
-        default=4000,
+        default=8192,
         gt=0,
     )
 
