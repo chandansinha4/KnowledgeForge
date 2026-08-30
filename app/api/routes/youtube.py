@@ -62,7 +62,9 @@ async def process_youtube(
     result = await workflow.run(request.url)
 
     return YouTubeResponse(
-        title=result.knowledge.title,
-        knowledge=result.knowledge.markdown,
-        reflection=result.reflection.markdown,
+    source_url=result.transcript.source_url,
+    video_id=result.transcript.video_id,
+    title=result.knowledge.title,
+    knowledge=result.knowledge.markdown,
+    reflection=result.reflection.markdown,
     )
