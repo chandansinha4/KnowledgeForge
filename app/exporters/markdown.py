@@ -23,6 +23,7 @@ class MarkdownExporter:
         """
 
         return self._export(
+            directory="Knowledge",
             filename=self._sanitize_filename(document.title),
             content=self._build_frontmatter(
                 title=document.title,
@@ -39,13 +40,12 @@ class MarkdownExporter:
         Export a ReflectionDocument to a Markdown file.
         """
 
-        filename = (
-            self._sanitize_filename(document.title)
-            + " - Reflection"
-        )
-
         return self._export(
-            filename=filename,
+            directory="Reflections",
+            filename=(
+                self._sanitize_filename(document.title)
+                + " - Reflection"
+            ),
             content=self._build_frontmatter(
                 title=document.title,
                 document_type="reflection",
@@ -55,19 +55,22 @@ class MarkdownExporter:
 
     def _export(
         self,
+        directory: str,
         filename: str,
         content: str,
     ) -> Path:
         """
-        Write Markdown content to the output directory.
+        Write Markdown content to the specified output directory.
         """
 
-        self._output_directory.mkdir(
+        output_directory = self._output_directory / directory
+
+        output_directory.mkdir(
             parents=True,
             exist_ok=True,
         )
 
-        path = self._output_directory / f"{filename}.md"
+        path = output_directory / f"{filename}.md"
 
         path.write_text(
             content,
