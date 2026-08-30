@@ -44,6 +44,7 @@ AI-powered knowledge management system that transforms YouTube videos into struc
 
 ### Version 1.2
 
+
 - Quiz Agent
 - Flashcards Agent
 - Anki Export

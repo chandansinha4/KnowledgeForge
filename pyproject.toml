@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "knowledgeforge"
+version = "0.1.0"
+description = "AI-powered knowledge management system for transforming educational content into structured knowledge."
+requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

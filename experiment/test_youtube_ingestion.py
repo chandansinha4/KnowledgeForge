@@ -1,27 +1,23 @@
-from __future__ import annotations
-
-import asyncio
-
 from app.ingestion.youtube import YouTubeTranscriptService
 
 
-async def main() -> None:
+def main() -> None:
+    url = input("Enter YouTube URL: ").strip()
+
     service = YouTubeTranscriptService()
 
-    url = "https://www.youtube.com/watch?v=J7DzL2_Na80&t=232s"
+    document = service.ingest(url)
 
-    document = await service.ingest(url)
-
-    print("=" * 60)
-    print("TRANSCRIPT DOCUMENT")
+    print("\n" + "=" * 60)
+    print("TRANSCRIPT")
     print("=" * 60)
 
-    print(f"Title: {document.title}")
-    print()
+    print(f"Characters: {len(document.transcript):,}")
+    print(f"Words: {len(document.transcript.split()):,}")
 
-    print("Transcript:")
-    print(document.transcript)
+    print("\nFirst 1000 characters:\n")
+    print(document.transcript[:1000])
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

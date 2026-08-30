@@ -4,6 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from app.core.exceptions import TranscriptError
 from app.domain.transcript import TranscriptDocument
 
 
@@ -15,7 +16,7 @@ class YouTubeTranscriptService:
     def __init__(self) -> None:
         self._client = YouTubeTranscriptApi()
 
-    async def ingest(
+    def ingest(
         self,
         url: str,
     ) -> TranscriptDocument:
@@ -23,25 +24,39 @@ class YouTubeTranscriptService:
         Extract the transcript from a YouTube video URL.
         """
 
-        video_id = self._extract_video_id(url)
+        try:
+            video_id = self._extract_video_id(url)
 
-        transcript = self._client.fetch(
-            video_id,
-            languages=["en"],
-        )
+            transcript = self._client.fetch(
+                video_id,
+                languages=["en"],
+            )
 
-        transcript_text = " ".join(
-            snippet.text
-            for snippet in transcript
-        )
+            transcript_text = " ".join(
+                snippet.text
+                for snippet in transcript
+            )
 
-        return TranscriptDocument(
-            title="",
-            transcript=transcript_text,
-        )
+            if not transcript_text.strip():
+                raise TranscriptError(
+                    "The YouTube transcript is empty."
+                )
 
+            return TranscriptDocument(
+                title="",
+                transcript=transcript_text,
+            )
+
+        except TranscriptError:
+            raise
+
+        except Exception as exc:
+            raise TranscriptError(
+                "Failed to retrieve YouTube transcript."
+            ) from exc
+
+    @staticmethod
     def _extract_video_id(
-        self,
         url: str,
     ) -> str:
         """
@@ -50,10 +65,12 @@ class YouTubeTranscriptService:
 
         parsed_url = urlparse(url)
 
-        if parsed_url.hostname in {"youtu.be", "www.youtu.be"}:
+        hostname = parsed_url.hostname
+
+        if hostname in {"youtu.be", "www.youtu.be"}:
             video_id = parsed_url.path.lstrip("/")
 
-        elif parsed_url.hostname in {
+        elif hostname in {
             "youtube.com",
             "www.youtube.com",
             "m.youtube.com",
@@ -66,6 +83,8 @@ class YouTubeTranscriptService:
             video_id = None
 
         if not video_id:
-            raise ValueError("Invalid YouTube URL.")
+            raise TranscriptError(
+                "Invalid YouTube URL."
+            )
 
         return video_id

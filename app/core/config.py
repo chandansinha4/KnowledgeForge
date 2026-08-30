@@ -26,6 +26,8 @@ class Settings(BaseSettings):
     APP_VERSION: str = "0.1.0"
     APP_ENV: str = "development"
 
+    OUTPUT_DIRECTORY: str = "tmp/output"
+
     # ==========================================================
     # Logging
     # ==========================================================
@@ -82,7 +84,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str
     GEMINI_MODEL: str
 
-
+   
 @lru_cache
 def get_settings() -> Settings:
     """
