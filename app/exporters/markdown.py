@@ -4,7 +4,7 @@ from pathlib import Path
 
 from app.domain.knowledge import KnowledgeDocument
 from app.domain.reflection import ReflectionDocument
-
+from app.domain.transcript import TranscriptDocument
 
 class MarkdownExporter:
     """
@@ -17,6 +17,7 @@ class MarkdownExporter:
     def export_knowledge(
         self,
         document: KnowledgeDocument,
+        source: TranscriptDocument,
     ) -> Path:
         """
         Export a KnowledgeDocument to a Markdown file.
@@ -29,12 +30,14 @@ class MarkdownExporter:
                 title=document.title,
                 document_type="knowledge",
                 content=document.markdown,
+                source=source,
             ),
         )
 
     def export_reflection(
         self,
         document: ReflectionDocument,
+        source: TranscriptDocument,
     ) -> Path:
         """
         Export a ReflectionDocument to a Markdown file.
@@ -50,6 +53,7 @@ class MarkdownExporter:
                 title=document.title,
                 document_type="reflection",
                 content=document.markdown,
+                source=source,
             ),
         )
 
@@ -84,6 +88,7 @@ class MarkdownExporter:
         title: str,
         document_type: str,
         content: str,
+        source: TranscriptDocument,
     ) -> str:
         """
         Add YAML frontmatter to a Markdown document.
@@ -94,6 +99,8 @@ class MarkdownExporter:
             f"title: {title}\n"
             f"type: {document_type}\n"
             "source: youtube\n"
+            f"source_url: {source.source_url}\n"
+            f"video_id: {source.video_id}\n"
             "---\n\n"
             f"{content.strip()}\n"
         )

@@ -43,9 +43,11 @@ class YouTubeTranscriptService:
                 )
 
             return TranscriptDocument(
-                title="",
-                transcript=transcript_text,
-            )
+                    title="",
+                    transcript=transcript_text,
+                    video_id=video_id,
+                    source_url=url,
+                )
 
         except TranscriptError:
             raise

@@ -12,3 +12,7 @@ class TranscriptDocument:
     title: str
 
     transcript: str
+
+    video_id: str
+
+    source_url: str

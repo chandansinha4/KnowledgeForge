@@ -14,6 +14,8 @@ def main() -> None:
 
     print(f"Characters: {len(document.transcript):,}")
     print(f"Words: {len(document.transcript.split()):,}")
+    print(f"Video ID: {document.video_id}")
+    print(f"URL: {document.source_url}")
 
     print("\nFirst 1000 characters:\n")
     print(document.transcript[:1000])

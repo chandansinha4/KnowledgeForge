@@ -9,7 +9,7 @@ from app.ingestion.youtube import YouTubeTranscriptService
 
 class YouTubeLearningWorkflow:
     """
-    Coordinates the complete YouTube learning pipeline.
+Coordinates the complete YouTube learning pipeline.
     """
 
     def __init__(
@@ -44,11 +44,13 @@ class YouTubeLearningWorkflow:
         )
 
         self._markdown_exporter.export_knowledge(
-            knowledge
+            knowledge,
+            transcript,
         )
 
         self._markdown_exporter.export_reflection(
-            reflection
+            reflection,
+            transcript,
         )
 
         return LearningDocument(
